@@ -1,7 +1,7 @@
 from pathlib import Path
 
 
-def generate_path(folder, file_name):
+def path(folder, file_name):
     """
     Generates path to a file using pathlib.
 

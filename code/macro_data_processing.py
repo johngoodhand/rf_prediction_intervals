@@ -6,7 +6,7 @@ the file in the data folder.
 # %%
 import pandas as pd
 import numpy as np
-from utils import generate_path
+from utils import path
 
 
 def transform_series(series, transformation_type):
@@ -68,7 +68,7 @@ def transform_series(series, transformation_type):
     
 
 # Load monthly data.
-fred_md = pd.read_csv(generate_path('data', 'current.csv'))
+fred_md = pd.read_csv(path('data', 'current.csv'))
 
 # Rename column to align with appendix
 fred_md = fred_md.rename(columns={'IPB51222S':'IPB51222s'})
@@ -91,14 +91,17 @@ fred_md['date'] = pd.to_datetime(fred_md['date'])
 # Set index
 fred_md = fred_md.set_index('date').sort_index()
 
+# Save data in levels
+fred_md.to_csv(path('data', 'fred_md_levels.csv'))
+
 # Generate dataframe that will contain the transformed series.
 df = pd.DataFrame(fred_md.index)
 df = df.set_index('date').sort_index()
 
-# Transform each series appropriately.
+# Transform each series as suggested for stationarity.
 for series in fred_md.columns:
     trans_series = transform_series(fred_md[series], info.loc[series,'tcode'])
     df = df.join(trans_series, how='outer')
 
-# Save
-df.to_csv(generate_path('data', 'fred_md_processed.csv'))
+# Save stationary data
+df.to_csv(path('data', 'fred_md_stationary.csv'))
